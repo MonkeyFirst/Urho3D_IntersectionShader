@@ -1,0 +1,12 @@
+[Sun May  6 18:21:25 2018] INFO: Opened log file D:/GITHUB/Urho3D_IntersectionShader/Bin/Application.log
+[Sun May  6 18:21:25 2018] INFO: Created 1 worker thread
+[Sun May  6 18:21:25 2018] INFO: Added resource path D:/GITHUB/Urho3D_IntersectionShader/Bin/Data/
+[Sun May  6 18:21:25 2018] INFO: Added resource path D:/GITHUB/Urho3D_IntersectionShader/Bin/CoreData/
+[Sun May  6 18:21:25 2018] INFO: Added resource path D:/GITHUB/Urho3D_IntersectionShader/Bin/Autoload/LargeData/
+[Sun May  6 18:21:25 2018] INFO: Set screen mode 1280x720 windowed monitor 0
+[Sun May  6 18:21:25 2018] INFO: Initialized input
+[Sun May  6 18:21:25 2018] INFO: Initialized user interface
+[Sun May  6 18:21:25 2018] INFO: Initialized renderer
+[Sun May  6 18:21:25 2018] INFO: Set audio mode 48000 Hz stereo interpolated
+[Sun May  6 18:21:25 2018] INFO: Initialized engine
+[Sun May  6 18:21:25 2018] INFO: Loading scene from D:/GITHUB/Urho3D_IntersectionShader/Bin/Data/Scenes/test1.xml

@@ -1,0 +1,3 @@
+<technique vs="UnlitParticleTest" ps="UnlitParticleTest" vsdefines="VERTEXCOLOR SOFTPARTICLES" psdefines="DIFFMAP VERTEXCOLOR SOFTPARTICLES EXPAND">
+    <pass name="alpha" depthwrite="false" depthtest="true" blend="alpha" />
+</technique>
