@@ -9,11 +9,16 @@ varying vec4 vWorldPos;
 #ifdef VERTEXCOLOR
     varying vec4 vColor;
 #endif
-#ifdef SOFTPARTICLES
+#ifdef INTERSECTION
     varying vec4 vScreenPos;
-    uniform float cSoftParticleFadeScale;
 #endif
-#line 16
+
+#ifdef COMPILEPS
+    uniform float cHighlightThresholdMax;
+    uniform vec4 cHighlightColor;   
+#endif
+
+#line 21
 
 void VS()
 {
@@ -23,7 +28,7 @@ void VS()
     vTexCoord = GetTexCoord(iTexCoord);
     vWorldPos = vec4(worldPos, GetDepth(gl_Position));
 
-    #ifdef SOFTPARTICLES
+    #ifdef INTERSECTION
         vScreenPos = GetScreenPos(gl_Position);
     #endif
 
@@ -57,46 +62,22 @@ void PS()
         float fogFactor = GetFogFactor(vWorldPos.w);
     #endif
 
-    // Soft particle fade
-    // In expand mode depth test should be off. In that case do manual alpha discard test first to reduce fill rate
-    #ifdef SOFTPARTICLES
-        #ifdef EXPAND
-            if (diffColor.a < 0.01)
-                discard;
-        #endif
-
-        float particleDepth = vWorldPos.w;
+    #ifdef INTERSECTION
         #ifdef HWDEPTH
-            float depth = ReconstructDepth(texture2DProj(sDepthBuffer, vScreenPos).r);
+            float BackgroundDepth = ReconstructDepth(texture2DProj(sDepthBuffer, vScreenPos).r);
         #else
-            float depth = DecodeDepth(texture2DProj(sDepthBuffer, vScreenPos).rgb);
+            float BackgroundDepth = DecodeDepth(texture2DProj(sDepthBuffer, vScreenPos).rgb);
         #endif
 
-        float _HighlightThresholdMax = 0.0005f;
-        vec4 _HighlightColor = vec4(1,1,1,1);
-        float diff = (abs(depth - particleDepth)) / _HighlightThresholdMax;
+        float fragmentDepth = vWorldPos.w;
+        float diff = abs((BackgroundDepth - fragmentDepth) * (cFarClipPS - cNearClipPS));
+        diff = diff / cHighlightThresholdMax;
         
-        if(diff <= 1)
+        if(diff <= 1.0)
         {
-          diffColor = mix(_HighlightColor, diffColor, vec4(diff, diff, diff, diff));
+          diffColor = mix(cHighlightColor, diffColor, vec4(diff, diff, diff, diff));
         }
-        
-#if 0
-        #ifdef EXPAND
-            float diffZ = max(particleDepth - depth, 0.0) * (cFarClipPS - cNearClipPS);
-            float fade = clamp(diffZ * cSoftParticleFadeScale, 0.0, 1.0);
-        #else
-            float diffZ = (depth - particleDepth) * (cFarClipPS - cNearClipPS);
-            float fade = clamp(1.0 - diffZ * cSoftParticleFadeScale, 0.0, 1.0);
-        #endif
-
-        #ifndef ADDITIVE
-            diffColor.a = max(diffColor.a - fade, 0.0);
-        #else
-            diffColor.rgb = max(diffColor.rgb - fade, vec3(0.0, 0.0, 0.0));
-        #endif
-#endif
-    
+            
     #endif
 
     gl_FragColor = vec4(GetFog(diffColor.rgb, fogFactor), diffColor.a);
